@@ -8,6 +8,7 @@ export const TripConfigurationSchema = z.object({
     nightDuration: z.number().min(1),
     duration: z.number().min(1),
     price: z.number().min(0),
+    imgUrl: z.array(z.string().url()).optional(),
     isActive: z.boolean().default(true),
     accommodations: z.array(z.string()),
     vehicles: z.array(z.string()),
@@ -31,6 +32,7 @@ export interface ITripConfiguration extends Document {
     nightDuration: number
     duration: number
     price: number
+    imgUrl?: string[]
     isActive: boolean
     accommodations: string[]
     vehicles: string[]
@@ -53,6 +55,7 @@ const TripConfigurationModelSchema= new Schema<ITripConfiguration>(
         nightDuration: { type: Number, required: true, min: 1 },
         duration: {type: Number, required: true, min: 1},
         price: { type: Number, required: true, min: 0 },
+        imgUrl: [{ type: String }],
         isActive: { type: Boolean, default: true },
         accommodations: [{ type: String, required: true }],
         vehicles: [{ type: String, required: true }],

@@ -6,7 +6,7 @@ const adminRoute = express.Router();
 
 adminRoute.use(adminMiddleware);
 
-adminRoute.post("/dashboard",adminDashboard);
+adminRoute.get("/dashboard",adminDashboard);
 adminRoute.get("/trips", trips);
 adminRoute.post("/trips", createTrip);
 adminRoute.put("/trips/:id", updateTrip);

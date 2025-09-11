@@ -5,6 +5,7 @@ export const AccommodationSchema = z.object({
     name: z.string().min(1),
     type: z.enum(["economy", "comfort", "superior", "luxury"]),
     description: z.string(),
+    imgUrl: z.string().url().optional(),
     maxOccupancy: z.number().min(1),
     images: z.array(z.string()).optional(),
     isActive: z.boolean().default(true),
@@ -16,6 +17,7 @@ export interface IAccommodation extends Document {
     name: string
     type: "economy" | "comfort" | "superior" | "luxury"
     description: string
+    imgUrl?: string
     maxOccupancy: number
     images?: string[]
     isActive: boolean
@@ -32,6 +34,7 @@ const AccommodationModelSchema = new Schema<IAccommodation>(
             enum: ["economy", "comfort", "superior", "luxury"],
         },
         description: { type: String, required: true },
+        imgUrl: { type: String },
         maxOccupancy: { type: Number, required: true, min: 1 },
         images: [{ type: String }],
         isActive: { type: Boolean, default: true },
