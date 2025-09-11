@@ -81,7 +81,7 @@ export interface IBooking extends Document {
     updatedAt: Date
 }
 
-const BookingSchema_Mongoose = new Schema<IBooking>(
+const BookingModelSchema = new Schema<IBooking>(
     {
         tripId: { type: Schema.Types.ObjectId, ref: "TripConfiguration", required: true },
         customerInfo: {
@@ -131,4 +131,4 @@ const BookingSchema_Mongoose = new Schema<IBooking>(
     },
 )
 
-export const Booking = mongoose.model<IBooking>("Booking", BookingSchema_Mongoose)
+export const Booking = mongoose.model<IBooking>("Booking", BookingModelSchema)

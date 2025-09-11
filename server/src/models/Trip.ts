@@ -1,11 +1,12 @@
 import mongoose, { Schema, type Document } from "mongoose"
-import { z } from "zod"
+import { number, z } from "zod"
 
 export const TripConfigurationSchema = z.object({
     name: z.string().min(1),
     description: z.string(),
     dayDuration: z.number().min(1),
     nightDuration: z.number().min(1),
+    duration: z.number().min(1),
     price: z.number().min(0),
     isActive: z.boolean().default(true),
     accommodations: z.array(z.string()),
@@ -28,6 +29,7 @@ export interface ITripConfiguration extends Document {
     description: string
     dayDuration: number
     nightDuration: number
+    duration: number
     price: number
     isActive: boolean
     accommodations: string[]
@@ -43,12 +45,13 @@ export interface ITripConfiguration extends Document {
     updatedAt: Date
 }
 
-const TripConfigurationSchema_Mongoose = new Schema<ITripConfiguration>(
+const TripConfigurationModelSchema= new Schema<ITripConfiguration>(
     {
         name: { type: String, required: true, unique: true },
         description: { type: String, required: true },
         dayDuration: { type: Number, required: true, min: 1 },
         nightDuration: { type: Number, required: true, min: 1 },
+        duration: {type: Number, required: true, min: 1},
         price: { type: Number, required: true, min: 0 },
         isActive: { type: Boolean, default: true },
         accommodations: [{ type: String, required: true }],
@@ -70,5 +73,5 @@ const TripConfigurationSchema_Mongoose = new Schema<ITripConfiguration>(
 
 export const TripConfiguration = mongoose.model<ITripConfiguration>(
     "TripConfiguration",
-    TripConfigurationSchema_Mongoose,
+    TripConfigurationModelSchema,
 )
