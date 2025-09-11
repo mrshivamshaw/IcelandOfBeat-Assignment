@@ -5,10 +5,6 @@ import { Activity, ActivitySchema } from "../models/Activity"
 import { Vehicle } from "../models/Vehicle"
 import { Booking } from "../models/Booking"
 
-const router = express.Router()
-
-router.use(adminMiddleware)
-
 export const adminDashboard = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     const [totalBookings, pendingBookings, totalRevenue, activeTrips, activeActivities, activeVehicles] =
@@ -142,5 +138,3 @@ export const bookings = async (req: express.Request, res: express.Response, next
     next(error)
   }
 };
-
-export default router
