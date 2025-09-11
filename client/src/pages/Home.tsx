@@ -83,7 +83,7 @@ export default function HomePage() {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-bold text-gray-900">${(trip.basePrice / 100).toLocaleString()}</span>
+                    <span className="text-2xl font-bold text-gray-900">${(trip.price / 100).toLocaleString()}</span>
                     <span className="text-gray-500 ml-1">per person</span>
                   </div>
                   <Link to={`/booking/${trip._id}`}>
@@ -95,56 +95,6 @@ export default function HomePage() {
           ))}
         </div>
       </div>
-
-      {/* Features Section */}
-      <div className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Us</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-teal-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Expert Guides</h3>
-              <p className="text-gray-600">Local experts who know Iceland's hidden gems and stories</p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-teal-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Small Groups</h3>
-              <p className="text-gray-600">Intimate experiences with personalized attention</p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <MapPin className="h-8 w-8 text-teal-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Best Locations</h3>
-              <p className="text-gray-600">Access to exclusive spots and optimal viewing times</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">Iceland Tours</h3>
-            <p className="text-gray-400 mb-4">Creating unforgettable memories in the land of fire and ice</p>
-            <div className="flex justify-center space-x-6">
-              <Link to="/admin" className="text-gray-400 hover:text-white">
-                Admin
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }
