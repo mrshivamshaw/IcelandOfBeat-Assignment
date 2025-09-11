@@ -1,0 +1,150 @@
+import { useQuery } from "@tanstack/react-query"
+import { Link } from "react-router-dom"
+import { tripsApi } from "../services/api"
+import { Button } from "../components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
+import { Badge } from "../components/ui/badge"
+import { MapPin, Clock, Users, Star } from "lucide-react"
+
+export default function HomePage() {
+  const { data: trips, isLoading } = useQuery({
+    queryKey: ["trips"],
+    queryFn: tripsApi.getAll,
+  }) as { data: any; isLoading: boolean }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading amazing Iceland tours...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-teal-600 to-blue-600 text-white">
+        <div className="absolute inset-0 bg-black opacity-20"></div>
+        <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">Discover Iceland's Magic</h1>
+            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+              Experience the land of fire and ice with our expertly crafted tours. From Northern Lights to glacial
+              adventures, create memories that last a lifetime.
+            </p>
+            <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg">
+              Explore Tours
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tours Section */}
+      <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Tours</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Choose from our carefully curated selection of Iceland adventures, each designed to showcase the country's
+            most spectacular sights.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {trips?.map((trip: any) => (
+            <Card key={trip._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="aspect-video bg-gradient-to-br from-teal-400 to-blue-500 relative">
+                <div className="absolute top-4 left-4">
+                  <Badge className="bg-orange-500 text-white">Best Seller</Badge>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <MapPin className="h-16 w-16 text-white opacity-50" />
+                </div>
+              </div>
+
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">{trip.name}</CardTitle>
+                <CardDescription className="text-gray-600">{trip.description}</CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Clock className="h-4 w-4 mr-1" />
+                    {trip.duration} days
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Users className="h-4 w-4 mr-1" />
+                    Up to {trip.maxParticipants}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-2xl font-bold text-gray-900">${(trip.basePrice / 100).toLocaleString()}</span>
+                    <span className="text-gray-500 ml-1">per person</span>
+                  </div>
+                  <Link to={`/booking/${trip._id}`}>
+                    <Button className="bg-teal-600 hover:bg-teal-700">Book Now</Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Us</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Star className="h-8 w-8 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Expert Guides</h3>
+              <p className="text-gray-600">Local experts who know Iceland's hidden gems and stories</p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Small Groups</h3>
+              <p className="text-gray-600">Intimate experiences with personalized attention</p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <MapPin className="h-8 w-8 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Best Locations</h3>
+              <p className="text-gray-600">Access to exclusive spots and optimal viewing times</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h3 className="text-2xl font-bold mb-4">Iceland Tours</h3>
+            <p className="text-gray-400 mb-4">Creating unforgettable memories in the land of fire and ice</p>
+            <div className="flex justify-center space-x-6">
+              <Link to="/admin" className="text-gray-400 hover:text-white">
+                Admin
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}

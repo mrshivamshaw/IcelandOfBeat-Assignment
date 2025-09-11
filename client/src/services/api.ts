@@ -31,3 +31,16 @@ export const authApi = {
     return response.data
   },
 }
+
+//trip api
+export const tripsApi = {
+  getAll: async () => {
+    const response = await api.get("/trips")
+    return response.data
+  },
+
+  getById: async (id: string) => {
+    const response = await api.get(`/trips/${id}`)
+    return response.data
+  },
+}
