@@ -1,6 +1,6 @@
 import express from "express"
 import { adminMiddleware } from "../middleware/auth"
-import { activities, adminDashboard, bookings, createActivity, createTrip, trips, updateActivity, updateTrip } from "../controllers/admin";
+import { activities, adminDashboard, bookings, createActivity, createDateRange, createPricingRule, createTrip, dateRanges, pricingRules, trips, updateActivity, updateTrip } from "../controllers/admin";
 
 const adminRoute = express.Router();
 
@@ -14,5 +14,9 @@ adminRoute.get("/activities", activities);
 adminRoute.post("/activities", createActivity);
 adminRoute.put("/activities/:id", updateActivity);
 adminRoute.get("/bookings", bookings);
+adminRoute.get("/pricing/date-ranges",dateRanges);
+adminRoute.post("/pricing/date-ranges", createDateRange);
+adminRoute.get("/pricing/rules", pricingRules);
+adminRoute.post("/pricing/rules", createPricingRule);
 
 export default adminRoute;

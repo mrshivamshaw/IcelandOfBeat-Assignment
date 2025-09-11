@@ -4,6 +4,7 @@ import { TripConfiguration, TripConfigurationSchema } from "../models/Trip"
 import { Activity, ActivitySchema } from "../models/Activity"
 import { Vehicle } from "../models/Vehicle"
 import { Booking } from "../models/Booking"
+import { DateRange, DateRangeSchema, PricingRule, PricingRuleSchema } from "../models/PriceRule"
 
 export const adminDashboard = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
@@ -134,6 +135,49 @@ export const bookings = async (req: express.Request, res: express.Response, next
         pages: Math.ceil(total / Number(limit)),
       },
     })
+  } catch (error) {
+    next(error)
+  }
+};
+
+//pricing
+export const dateRanges = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  try {
+    const dateRanges = await DateRange.find().sort({ startDate: 1 })
+    res.json(dateRanges)
+  } catch (error) {
+    next(error)
+  }
+};
+
+export const createDateRange = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  try {
+    const validatedData = DateRangeSchema.parse(req.body)
+    const dateRange = new DateRange(validatedData)
+    await dateRange.save()
+    res.status(201).json(dateRange)
+  } catch (error) {
+    next(error)
+  }
+};
+
+export const pricingRules = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  try {
+    const rules = await PricingRule.find()
+      .populate("dateRangeId", "name startDate endDate")
+      .sort({ itemType: 1, itemId: 1 })
+    res.json(rules)
+  } catch (error) {
+    next(error)
+  }
+};
+
+export const createPricingRule = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  try {
+    const validatedData = PricingRuleSchema.parse(req.body)
+    const rule = new PricingRule(validatedData)
+    await rule.save()
+    res.status(201).json(rule)
   } catch (error) {
     next(error)
   }
