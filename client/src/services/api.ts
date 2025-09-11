@@ -44,3 +44,108 @@ export const tripsApi = {
     return response.data
   },
 }
+
+//booking API
+export const bookingsApi = {
+  create: async (bookingData: any) => {
+    const response = await api.post("/bookings", bookingData)
+    return response.data
+  },
+
+  getById: async (id: string) => {
+    const response = await api.get(`/bookings/${id}`)
+    return response.data
+  },
+
+  updateStatus: async (id: string, status: any) => {
+    const response = await api.patch(`/bookings/${id}/status`, status)
+    return response.data
+  },
+}
+
+//pricing API
+export const pricingApi = {
+  calculate: async (pricingData: any) => {
+    const response = await api.post("/pricing/calculate", pricingData)
+    return response.data
+  },
+}
+
+//activities API
+export const activitiesApi = {
+  getAll: async (params?: any) => {
+    const response = await api.get("/activities", { params })
+    return response.data
+  },
+
+  getById: async (id: string) => {
+    const response = await api.get(`/activities/${id}`)
+    return response.data
+  },
+}
+
+//admin api
+export const adminApi = {
+  getDashboard: async () => {
+    const response = await api.get("/admin/dashboard")
+    return response.data
+  },
+
+  //trips
+  getTrips: async () => {
+    const response = await api.get("/admin/trips")
+    return response.data
+  },
+
+  createTrip: async (tripData: any) => {
+    const response = await api.post("/admin/trips", tripData)
+    return response.data
+  },
+
+  updateTrip: async (id: string, tripData: any) => {
+    const response = await api.put(`/admin/trips/${id}`, tripData)
+    return response.data
+  },
+  //activities
+  getActivities: async () => {
+    const response = await api.get("/admin/activities")
+    return response.data
+  },
+
+  createActivity: async (activityData: any) => {
+    const response = await api.post("/admin/activities", activityData)
+    return response.data
+  },
+
+  updateActivity: async (id: string, activityData: any) => {
+    const response = await api.put(`/admin/activities/${id}`, activityData)
+    return response.data
+  },
+
+  //pricing
+  getDateRanges: async () => {
+    const response = await api.get("/admin/pricing/date-ranges")
+    return response.data
+  },
+
+  createDateRange: async (dateRangeData: any) => {
+    const response = await api.post("/admin/pricing/date-ranges", dateRangeData)
+    return response.data
+  },
+
+  getPricingRules: async () => {
+    const response = await api.get("/admin/pricing/rules")
+    return response.data
+  },
+
+  createPricingRule: async (ruleData: any) => {
+    const response = await api.post("/admin/pricing/rules", ruleData)
+    return response.data
+  },
+
+  //bookings
+  getBookings: async (params?: any) => {
+    const response = await api.get("/admin/bookings", { params })
+    return response.data
+  },
+}

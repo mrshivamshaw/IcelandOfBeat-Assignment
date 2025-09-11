@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useAdminTrips } from "../../hooks/useTrips"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
@@ -9,7 +8,6 @@ import { Plus, Edit, Eye, Users, Clock, MapPin } from "lucide-react"
 
 export default function AdminTrips() {
     const { data: trips, isLoading } = useAdminTrips()
-    const [selectedTrip, setSelectedTrip] = useState(null)
 
     if (isLoading) {
         return (
