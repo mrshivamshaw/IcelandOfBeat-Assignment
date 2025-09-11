@@ -42,7 +42,7 @@ app.use("/api/pricing", pricingRoutes)
 app.use("/api/admin", authMiddleware, adminRoutes)
 
 app.use(errorHandler)
-app.use("*", (req, res) => {
+app.use(/.*/, (req, res) => {
   res.status(404).json({ error: "Route not found" })
 })
 

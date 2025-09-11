@@ -6,7 +6,6 @@ export const VehicleSchema = z.object({
   carModel: z.string().min(1),
   type: z.enum(["suv", "sedan", "minivan", "luxury"]),
   noPassengers: z.number().min(1),
-  imgUrl: z.string().url().optional(),
   noDoors: z.number().min(1),
   noSuitcases: z.number().min(1),
   transmission: z.enum(["manual", "automatic"]),
@@ -24,7 +23,6 @@ export interface IVehicle extends Document{
   noPassengers: number;
   noDoors: number;
   noSuitcases: number;
-  imgUrl?: string;
   transmission: "manual" | "automatic";
   features: string[];
   images?: string[];
@@ -45,7 +43,6 @@ const VehicleModelSchema = new Schema<IVehicle>(
     noPassengers: { type: Number, required: true, min: 1 },
     noDoors: { type: Number, required: true, min: 1 },
     noSuitcases: { type: Number, required: true, min: 1 },
-    imgUrl: { type: String },
     transmission: {
       type: String,
       required: true,

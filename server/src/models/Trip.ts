@@ -8,7 +8,6 @@ export const TripConfigurationSchema = z.object({
     nightDuration: z.number().min(1),
     duration: z.number().min(1),
     price: z.number().min(0),
-    imgUrl: z.array(z.string().url()).optional(),
     isActive: z.boolean().default(true),
     accommodations: z.array(z.string()),
     vehicles: z.array(z.string()),
