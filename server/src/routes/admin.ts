@@ -1,7 +1,9 @@
 import express from "express"
 import { adminMiddleware } from "../middleware/auth"
 import { activities, adminDashboard, bookings, createAccommodation, createActivity, createDateRange, createPricingRule, createTrip, createVehicle, dateRanges, getAccommodations, getVehicles, pricingRules, trips, updateAccommodation, updateActivity, updateTrip, updateVehicle } from "../controllers/admin";
+import multer from "multer";
 
+const upload = multer({ storage: multer.memoryStorage() }); 
 const adminRoute = express.Router();
 
 adminRoute.use(adminMiddleware);
@@ -18,9 +20,9 @@ adminRoute.get("/pricing/date-ranges",dateRanges);
 adminRoute.post("/pricing/date-ranges", createDateRange);
 adminRoute.get("/pricing/rules", pricingRules);
 adminRoute.post("/pricing/rules", createPricingRule);
-adminRoute.post("/vehicle", createVehicle);
+adminRoute.post("/vehicle", upload.single("images"), createVehicle);
 adminRoute.get("/vehicle", getVehicles);
-adminRoute.put("/vehicle/:id", updateVehicle);
+adminRoute.put("/vehicle/:id", upload.single("images"), updateVehicle);
 adminRoute.get("/accommadation", getAccommodations);
 adminRoute.post("/accommadation", createAccommodation);
 adminRoute.put("/accommadation", updateAccommodation);

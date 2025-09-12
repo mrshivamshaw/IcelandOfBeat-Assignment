@@ -5,14 +5,37 @@ export const VehicleSchema = z.object({
   name: z.string().min(1),
   carModel: z.string().min(1),
   type: z.enum(["suv", "sedan", "minivan", "luxury"]),
-  noPassengers: z.number().min(1),
-  noDoors: z.number().min(1),
-  noSuitcases: z.number().min(1),
+  noPassengers: z.preprocess((val) => Number(val), z.number().min(1)),
+  noDoors: z.preprocess((val) => Number(val), z.number().min(1)),
+  noSuitcases: z.preprocess((val) => Number(val), z.number().min(1)),
   transmission: z.enum(["manual", "automatic"]),
-  features: z.array(z.string()),
-  images: z.array(z.string()).optional(),
-  isActive: z.boolean().default(true),
-});
+  features: z.preprocess((val) => {
+    if (typeof val === "string") {
+      try {
+        return JSON.parse(val)
+      } catch {
+        return []
+      }
+    }
+    return val
+  }, z.array(z.string())),
+  images: z.preprocess((val) => {
+    if (typeof val === "string") {
+      try {
+        return JSON.parse(val)
+      } catch {
+        return [val]
+      }
+    }
+    return val
+  }, z.array(z.string()).optional()),
+  isActive: z.preprocess((val) => {
+    if (val === "true" || val === true) return true
+    if (val === "false" || val === false) return false
+    return true // default
+  }, z.boolean()),
+})
+
 
 export type VehicleType = z.infer<typeof VehicleSchema>
 

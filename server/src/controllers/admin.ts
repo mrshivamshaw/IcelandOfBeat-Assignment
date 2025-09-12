@@ -250,16 +250,54 @@ export const getAccommodations = async (req: express.Request, res: express.Respo
 
 export const createVehicle = async(req: express.Request, res: express.Response) => {
     try {
-        const validateData = VehicleSchema.parse(req.body)
-        if (!validateData) {
-            return res.status(400).json({ error: "Invalid Vehicle data" })
-        }
+      console.log(req.body);
+      
+      const validateData = VehicleSchema.parse(req.body)
+      if (!validateData) {
+        return res.status(400).json({ error: "Invalid Vehicle data" })
+      }
+      
+      const newVehicle = new Vehicle(validateData);
+      await newVehicle.save();
 
-        const newVehicle = new Vehicle(validateData);
-        await newVehicle.save();
+        const basePrice = newVehicle.name.includes("Tucson")
+          ? 10000
+          : newVehicle.name.includes("Sorento")
+            ? 15000
+            : newVehicle.name.includes("Land Cruiser")
+              ? 20000
+              : 25000
 
+        const winterHighSeason = await DateRange.findOne({ name: "Winter High Season" })
+        const winterLowSeason = await DateRange.findOne({ name: "Winter Low Season" })
+
+        const pricingRules = []
+        pricingRules.push(
+          {
+            itemType: "vehicle",
+            //@ts-ignore
+            itemId: newVehicle._id.toString(),
+            dateRangeId: winterHighSeason?._id,
+            basePrice: basePrice,
+            perPersonPrice: 0,
+          },
+          {
+            itemType: "vehicle",
+            //@ts-ignore
+            itemId: newVehicle._id.toString(),
+            dateRangeId: winterLowSeason?._id,
+            basePrice: Math.floor(basePrice * 0.8),
+            perPersonPrice: 0,
+          },
+        )
+
+        const result = await PricingRule.insertMany(pricingRules);
+        console.log(result);
+        
         res.status(201).json(newVehicle)
     } catch (error) {
+      console.log(error);
+      
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
