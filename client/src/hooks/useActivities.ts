@@ -19,6 +19,45 @@ export const useAdminActivities = () => {
   })
 }
 
+export const useCreateActivity = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: adminApi.createActivity,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "activities"] })
+      toast.success("Success", {
+        description: "Activity created successfully",
+      })
+    },
+    onError: (error: any) => {
+      toast.error("Error", {
+        description: error.response?.data?.error || "Failed to create activity",
+      })
+    },
+  })
+}
+
+export const useUpdateActivity = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: string; [key: string]: any }) => 
+      adminApi.updateActivity(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "activities"] })
+      toast.success("Success", {
+        description: "Activity updated successfully",
+      })
+    },
+    onError: (error: any) => {
+      toast.error("Error", {
+        description: error.response?.data?.error || "Failed to update activity",
+      })
+    },
+  })
+}
+
 export const useDateRanges = () => {
   return useQuery({
     queryKey: ["admin", "pricing", "date-ranges"],

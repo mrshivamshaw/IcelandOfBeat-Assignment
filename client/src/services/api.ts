@@ -91,6 +91,25 @@ export const adminApi = {
     return response.data
   },
 
+  getVehicles: async () => {
+    const response = await api.get("/admin/vehicle")
+    return response.data
+  },
+
+  createVehicle: async (vehicleData: FormData) => {
+    const response = await api.post("/admin/vehicle", vehicleData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    return response.data
+  },
+
+  updateVehicle: async (id: string, vehicleData: FormData) => {
+    const response = await api.put(`/admin/vehicle/${id}`, vehicleData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    return response.data
+  },
+
   //trips
   getTrips: async () => {
     const response = await api.get("/admin/trips")
