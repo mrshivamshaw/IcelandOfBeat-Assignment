@@ -3,14 +3,15 @@ import { Link } from "react-router-dom"
 import { tripsApi } from "../services/api"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
-import { Badge } from "../components/ui/badge"
-import { MapPin, Clock, Users, Star } from "lucide-react"
+import { Clock } from "lucide-react"
 
 export default function HomePage() {
   const { data: trips, isLoading } = useQuery({
     queryKey: ["trips"],
     queryFn: tripsApi.getAll,
   }) as { data: any; isLoading: boolean }
+
+  const img = "https://placehold.co/300x200/EEE/31343C?text=Hello+World"
 
   if (isLoading) {
     return (
@@ -55,14 +56,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {trips?.map((trip: any) => (
             <Card key={trip._id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video bg-gradient-to-br from-teal-400 to-blue-500 relative">
-                <div className="absolute top-4 left-4">
-                  <Badge className="bg-orange-500 text-white">Best Seller</Badge>
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <MapPin className="h-16 w-16 text-white opacity-50" />
-                </div>
-              </div>
+              <img className="w-full h-48 object-cover" src={img} alt="" />
 
               <CardHeader>
                 <CardTitle className="text-xl font-bold">{trip.name}</CardTitle>
@@ -79,8 +73,7 @@ export default function HomePage() {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-bold text-gray-900">${(trip.price / 100).toLocaleString()}</span>
-                    <span className="text-gray-500 ml-1">per person</span>
+                    <span className="text-2xl font-bold text-gray-900">${(trip.price).toLocaleString()}</span>
                   </div>
                   <Link to={`/booking/${trip._id}`}>
                     <Button className="bg-teal-600 hover:bg-teal-700">Book Now</Button>
