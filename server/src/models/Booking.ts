@@ -20,6 +20,15 @@ export const BookingSchema = z.object({
         children: z.number().min(0),
         infants: z.number().min(0),
     }),
+    travelerDetails: z.array(z.object({
+        title: z.string().optional(),
+        firstName: z.string().min(1),
+        lastName: z.string().min(1),
+        dateOfBirth: z.string(),
+        passportNumber: z.string().optional(),
+        countryOfResidence: z.string().min(1),
+        type: z.enum(["adult", "child", "infant"]),
+    })).optional(),
     startDate: z.string().datetime(),
     selectedAccommodation: z.string(),
     selectedVehicle: z.string(),
@@ -60,7 +69,16 @@ export interface IBooking extends Document {
         adults: number
         children: number
         infants: number
-    }
+    },
+    travelerDetails?: Array<{
+        title?: string
+        firstName: string
+        lastName: string
+        dateOfBirth: Date
+        passportNumber?: string
+        countryOfResidence: string
+        type: "adult" | "child" | "infant"
+    }>
     startDate: Date
     selectedAccommodation: string
     selectedVehicle: string
@@ -101,6 +119,19 @@ const BookingModelSchema = new Schema<IBooking>(
             children: { type: Number, default: 0, min: 0 },
             infants: { type: Number, default: 0, min: 0 },
         },
+        travelerDetails: [{
+            title: { type: String, enum: ["Mr", "Mrs", "Ms", "Dr"] },
+            firstName: { type: String, required: true },
+            lastName: { type: String, required: true },
+            dateOfBirth: { type: Date, required: true },
+            passportNumber: { type: String },
+            countryOfResidence: { type: String, required: true },
+            type: { 
+                type: String, 
+                enum: ["adult", "child", "infant"], 
+                required: true 
+            },
+        }],
         startDate: { type: Date, required: true },
         selectedAccommodation: { type: String, required: true },
         selectedVehicle: { type: String, required: true },

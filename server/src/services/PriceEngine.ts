@@ -159,7 +159,7 @@ export class PricingEngine {
 
         const activity = await Activity.findById(activityId)
         if (activity) {
-            return activity.perPersonPrice + activity.perPersonPrice * participants
+            return activity.perPersonPrice * participants
         }
 
         return 5000
