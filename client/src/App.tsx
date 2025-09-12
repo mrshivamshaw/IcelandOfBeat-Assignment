@@ -9,6 +9,7 @@ import AdminActivities from "./pages/admin/AdminActivities"
 import AdminPricing from "./pages/admin/AdminPricing"
 import AdminBookings from "./pages/admin/AdminBookings"
 import BookingPage from "./pages/Booking"
+import AdminVehicles from "./pages/admin/AdminVehicle"
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="activities" element={<AdminActivities />} />
           <Route path="pricing" element={<AdminPricing />} />
           <Route path="bookings" element={<AdminBookings />} />
+          <Route path="vechile" element={<AdminVehicles />} />
         </Route>
       </Routes>
     </div>
