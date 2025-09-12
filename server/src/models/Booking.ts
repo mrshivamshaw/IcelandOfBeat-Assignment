@@ -29,7 +29,7 @@ export const BookingSchema = z.object({
         countryOfResidence: z.string().min(1),
         type: z.enum(["adult", "child", "infant"]),
     })).optional(),
-    startDate: z.string().datetime(),
+    startDate: z.coerce.date(),
     selectedAccommodation: z.string(),
     selectedVehicle: z.string(),
     selectedActivities: z.array(z.string()),

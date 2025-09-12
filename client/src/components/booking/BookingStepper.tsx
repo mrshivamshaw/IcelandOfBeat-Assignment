@@ -195,6 +195,7 @@ export default function BookingStepper({ trip }: BookingStepperProps) {
                   onPrev={prevStep}
                   getAccommodationName={getAccommodationName}
                   getVehicleName={getVehicleName}
+                  submitBooking={submitBooking}
                 />
               </CardContent>
             </Card>

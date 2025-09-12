@@ -16,7 +16,7 @@ export const createBooking = async (req: express.Request, res: express.Response,
     //calculate pricing
     const pricingEngine = new PricingEngine()
     const pricing = await pricingEngine.calculateBookingPrice({
-      startDate: validatedData.startDate,
+      startDate: validatedData.startDate.toISOString(),
       travelers: validatedData.travelers,
       selectedAccommodation: validatedData.selectedAccommodation,
       selectedVehicle: validatedData.selectedVehicle,

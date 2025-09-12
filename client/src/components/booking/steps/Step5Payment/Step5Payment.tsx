@@ -15,11 +15,13 @@ interface Step5Props {
   updateBookingData: (data: any) => void
   onNext: () => void
   onPrev: () => void
+  submitBooking: () => void
 }
 
-export default function Step5Payment({ bookingData, updateBookingData, onNext, onPrev }: Step5Props) {
+export default function Step5Payment({ bookingData, updateBookingData, onNext, onPrev, submitBooking }: Step5Props) {
   const handlePayment = () => {
     setTimeout(() => {
+      submitBooking()
       onNext()
     }, 2000)
   }
