@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "../../lib/utils"
-import { LayoutDashboard, MapPin, Activity, DollarSign, Calendar } from "lucide-react"
+import { LayoutDashboard, MapPin, Activity, DollarSign, Calendar, Car, Home,  } from "lucide-react"
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Trips", href: "/admin/trips", icon: MapPin },
   { name: "Activities", href: "/admin/activities", icon: Activity },
+  { name: "Vehicles", href: "/admin/vehicle", icon: Car },
+  { name: "Accommadations", href: "/admin/accommadation", icon: Home },
   { name: "Pricing", href: "/admin/pricing", icon: DollarSign },
   { name: "Bookings", href: "/admin/bookings", icon: Calendar },
 ]

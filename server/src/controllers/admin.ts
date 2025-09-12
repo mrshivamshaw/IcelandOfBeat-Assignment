@@ -194,6 +194,34 @@ export const createAccommodation = async (req: express.Request, res: express.Res
         const newAccommodation = new Accommodation(validateData)
         await newAccommodation.save()
 
+        const highSeasonPrice = (newAccommodation.type as "economy") ? 8000 : newAccommodation.type === "comfort" ? 10000 : 16000;
+        const lowSeasonPrice = (newAccommodation.type as "economy") ? 4000 : newAccommodation.type === "comfort" ? 5000 : 8000
+
+        const pricingRules = []
+        const winterHighSeason = await DateRange.findOne({ name: "Winter High Season" })
+        const winterLowSeason = await DateRange.findOne({ name: "Winter Low Season" })
+        pricingRules.push(
+          {
+            itemType: "accommodation",
+            //@ts-ignore
+            itemId: newAccommodation._id.toString(),
+            dateRangeId: winterHighSeason?._id,
+            basePrice: highSeasonPrice,
+            perPersonPrice: 0,
+          },
+          {
+            itemType: "accommodation",
+            //@ts-ignore
+            itemId: newAccommodation._id.toString(),
+            dateRangeId: winterLowSeason?._id,
+            basePrice: lowSeasonPrice,
+            perPersonPrice: 0,
+          },
+        )
+
+        const result = await PricingRule.insertMany(pricingRules);
+        console.log(result);
+        
         res.status(201).json(newAccommodation)
     } catch (error) {
         next(error)
@@ -240,8 +268,8 @@ export const deleteAccommodation = async (req: express.Request, res: express.Res
 }
 
 export const getAccommodations = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const accommodations = await Accommodation.find()
+    try {      
+        const accommodations = await Accommodation.find();        
         res.json(accommodations)
     } catch (error) {
         next(error)

@@ -110,6 +110,23 @@ export const adminApi = {
     return response.data
   },
 
+   getAccommodations: async () => {
+    const response = await api.get("/admin/accommadation")
+    return response.data
+  },
+  createAccommodation: async (formData: FormData) => {
+    const response = await api.post("/admin/accommadation", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    return response.data
+  },
+  updateAccommodation: async (id: string, formData: FormData) => {
+    const response = await api.put(`/admin/accommadation/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    return response.data
+  },
+
   //trips
   getTrips: async () => {
     const response = await api.get("/admin/trips")

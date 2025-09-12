@@ -24,7 +24,7 @@ adminRoute.post("/vehicle", upload.single("images"), createVehicle);
 adminRoute.get("/vehicle", getVehicles);
 adminRoute.put("/vehicle/:id", upload.single("images"), updateVehicle);
 adminRoute.get("/accommadation", getAccommodations);
-adminRoute.post("/accommadation", createAccommodation);
-adminRoute.put("/accommadation", updateAccommodation);
+adminRoute.post("/accommadation", upload.single("images"), createAccommodation);
+adminRoute.put("/accommadation/:id", upload.single("images"), updateAccommodation);
 
 export default adminRoute;
