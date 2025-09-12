@@ -154,6 +154,10 @@ export const adminApi = {
   },
 
   updateActivity: async (id: string, activityData: any) => {
+    console.log("Updating activity with ID:", id);
+    console.log("Activity data:", Object.fromEntries(activityData.entries()));
+    
+    
     const response = await api.put(`/admin/activities/${id}`, activityData)
     return response.data
   },

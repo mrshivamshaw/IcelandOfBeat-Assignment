@@ -42,7 +42,7 @@ export const useUpdateActivity = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: string; [key: string]: any }) => 
+    mutationFn: ({ id, data }: { id: string; data: FormData }) => 
       adminApi.updateActivity(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "activities"] })
@@ -57,6 +57,7 @@ export const useUpdateActivity = () => {
     },
   })
 }
+
 
 export const useDateRanges = () => {
   return useQuery({

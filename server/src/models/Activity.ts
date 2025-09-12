@@ -5,15 +5,34 @@ export const ActivitySchema = z.object({
   name: z.string().min(1),
   description: z.string(),
   category: z.enum(["adventure", "cultural", "nature", "relaxation", "sightseeing"]),
-  duration: z.number().min(0.5),
-  perPersonPrice: z.number().min(0),
-  isActive: z.boolean().default(true),
+  duration: z.coerce.number().min(0.5),
+  perPersonPrice: z.coerce.number().min(0),
+  isActive: z.coerce.boolean().default(true),
   images: z.array(z.string()).optional(),
   location: z.string().optional(),
-  includes: z.array(z.string()).optional(),
-  excludes: z.array(z.string()).optional(),
+  includes: z.preprocess((val) => {
+    if (typeof val === "string") {
+      try {
+        return JSON.parse(val)
+      } catch {
+        return [val]
+      }
+    }
+    return val
+  }, z.array(z.string()).optional()),
+  excludes: z.preprocess((val) => {
+    if (typeof val === "string") {
+      try {
+        return JSON.parse(val)
+      } catch {
+        return [val]
+      }
+    }
+    return val
+  }, z.array(z.string()).optional()),
   details: z.string().optional(),
 })
+
 
 export type ActivityType = z.infer<typeof ActivitySchema>
 

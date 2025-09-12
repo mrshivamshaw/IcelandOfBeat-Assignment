@@ -41,13 +41,6 @@ export default function AdminDashboard() {
             bgColor: "bg-orange-100",
         },
         {
-            title: "Total Revenue",
-            value: `$${((stats?.totalRevenue || 0) / 100).toLocaleString()}`,
-            icon: DollarSign,
-            color: "text-green-600",
-            bgColor: "bg-green-100",
-        },
-        {
             title: "Active Trips",
             value: stats?.activeTrips || 0,
             icon: MapPin,

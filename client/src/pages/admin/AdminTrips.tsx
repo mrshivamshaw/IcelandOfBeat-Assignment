@@ -42,14 +42,14 @@ export default function AdminTrips() {
         {
             name: "accommodations",
             label: "Accommodations",
-            type: "select",
+            type: "checkbox",
             options: accommodations?.map((acc: any) => ({ value: acc._id, label: acc.name })) || [],
             required: false,
         },
         {
             name: "vehicles",
             label: "Vehicles",
-            type: "select",
+            type: "checkbox",
             options: vehicles?.map((veh: any) => ({ value: veh._id, label: veh.name })) || [],
             required: false,
         },

@@ -31,32 +31,18 @@ export default function AdminActivities() {
       name: "category",
       label: "Category",
       type: "select",
-      options: categories.slice(1).map((cat) => ({ value: cat, label: cat })),
+      options: categories.slice(1).map((cat) => ({
+        value: cat,
+        label: cat.charAt(0).toUpperCase() + cat.slice(1),
+      })),
       required: true,
     },
     { name: "duration", label: "Duration (hours)", type: "number", required: true },
-    { name: "maxParticipants", label: "Max Participants", type: "number", required: true },
-    {
-      name: "difficulty",
-      label: "Difficulty",
-      type: "select",
-      options: ["easy", "moderate", "hard"].map((diff) => ({ value: diff, label: diff })),
-      required: true,
-    },
-    {
-      name: "basePrice",
-      label: "Base Price ($)",
-      type: "number",
-      required: true,
-      transform: {
-        toApi: (value: string) => Number(value) * 100,
-        fromApi: (value: number) => (value / 100).toString(),
-      },
-    },
     {
       name: "perPersonPrice",
       label: "Per Person Price ($)",
       type: "number",
+      required: true,
       transform: {
         toApi: (value: string) => Number(value) * 100,
         fromApi: (value: number) => (value / 100).toString(),
@@ -87,8 +73,12 @@ export default function AdminActivities() {
 
   const handleAddSubmit = async (data: Record<string, any>, file?: File) => {
     const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value.toString())
+    activityFields.forEach((field) => {
+      if (field.name in data && field.type !== "image") {
+        const value = data[field.name]
+        const transformedValue = field.transform?.toApi ? field.transform.toApi(value) : value        
+        formData.append(field.name, transformedValue.toString())
+      }
     })
     if (file) {
       formData.append("image", file)
@@ -98,12 +88,18 @@ export default function AdminActivities() {
 
   const handleEditSubmit = async (data: Record<string, any>, file?: File) => {
     const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value.toString())
+    activityFields.forEach((field) => {
+      if (field.name in data && field.type !== "image") {
+        const value = data[field.name]
+        const transformedValue = field.transform?.toApi ? field.transform.toApi(value) : value        
+        formData.append(field.name, transformedValue.toString())
+      }
     })
     if (file) {
       formData.append("image", file)
     }
+    console.log("Updating activity with ID:", modalConfig.initialData._id, "Data:", Object.fromEntries(formData.entries()));
+    
     await updateActivity.mutateAsync({ id: modalConfig.initialData._id, data: formData })
   }
 
@@ -157,7 +153,7 @@ export default function AdminActivities() {
               onClick={() => setSelectedCategory(category)}
               className="capitalize"
             >
-              {category}
+              {category === "all" ? "All" : category.charAt(0).toUpperCase() + category.slice(1)}
             </Button>
           ))}
         </div>
@@ -242,7 +238,7 @@ export default function AdminActivities() {
         fields={activityFields}
         initialData={modalConfig.initialData}
         onSubmit={modalConfig.mode === "create" ? handleAddSubmit : handleEditSubmit}
-        isSubmitting={modalConfig.mode === "create" ? createActivity?.isLoading : updateActivity?.isLoading}
+        isSubmitting={modalConfig.mode === "create" ? createActivity.isLoading : updateActivity.isLoading}
       />
     </div>
   )
