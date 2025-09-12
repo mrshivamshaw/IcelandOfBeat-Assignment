@@ -5,6 +5,7 @@ import { Activity, ActivitySchema } from "../models/Activity"
 import { Vehicle } from "../models/Vehicle"
 import { Booking } from "../models/Booking"
 import { DateRange, DateRangeSchema, PricingRule, PricingRuleSchema } from "../models/PriceRule"
+import { Accommodation, AccommodationSchema } from "../models/Accommadation"
 
 export const adminDashboard = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
@@ -182,3 +183,67 @@ export const createPricingRule = async (req: express.Request, res: express.Respo
     next(error)
   }
 };
+
+export const createAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const validateData = AccommodationSchema.parse(req.body)
+        if (!validateData) {
+            return res.status(400).json({ error: "Invalid accommodation data" })
+        }
+
+        const newAccommodation = new Accommodation(validateData)
+        await newAccommodation.save()
+
+        res.status(201).json(newAccommodation)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const updateAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const accommodationId = req.params.id
+        const validateData = AccommodationSchema.partial().parse(req.body)
+        if (!validateData) {
+            return res.status(400).json({ error: "Invalid accommodation data" })
+        }
+
+        const updatedAccommodation = await Accommodation.findByIdAndUpdate(accommodationId, validateData, {
+            new: true,
+            runValidators: true,
+        })
+
+        if (!updatedAccommodation) {
+            return res.status(404).json({ error: "Accommodation not found" })
+        }
+
+        res.json(updatedAccommodation)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const accommodationId = req.params.id
+
+        const deletedAccommodation = await Accommodation.findByIdAndDelete(accommodationId)
+
+        if (!deletedAccommodation) {
+            return res.status(404).json({ error: "Accommodation not found" })
+        }
+
+        res.json({ message: "Accommodation deleted successfully" })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getAccommodations = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const accommodations = await Accommodation.find()
+        res.json(accommodations)
+    } catch (error) {
+        next(error)
+    }
+}
