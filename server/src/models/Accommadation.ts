@@ -3,7 +3,7 @@ import { z } from "zod"
 
 export const AccommodationSchema = z.object({
     name: z.string().min(1),
-    type: z.enum(["economy", "comfort", "superior", "luxury"]),
+    type: z.enum(["comfort", "superior"]),
     description: z.string(),
     maxOccupancy: z.number().min(1),
     images: z.array(z.string()).optional(),
@@ -14,7 +14,7 @@ export type AccommodationType = z.infer<typeof AccommodationSchema>
 
 export interface IAccommodation extends Document {
     name: string
-    type: "economy" | "comfort" | "superior" | "luxury"
+    type: "comfort" | "superior"
     description: string
     maxOccupancy: number
     images?: string[]
@@ -29,7 +29,7 @@ const AccommodationModelSchema = new Schema<IAccommodation>(
         type: {
             type: String,
             required: true,
-            enum: ["economy", "comfort", "superior", "luxury"],
+            enum: ["comfort", "superior",],
         },
         description: { type: String, required: true },
         maxOccupancy: { type: Number, required: true, min: 1 },

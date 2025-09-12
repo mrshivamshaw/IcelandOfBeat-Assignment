@@ -8,6 +8,7 @@ import AdminTrips from "./pages/admin/AdminTrips"
 import AdminActivities from "./pages/admin/AdminActivities"
 import AdminPricing from "./pages/admin/AdminPricing"
 import AdminBookings from "./pages/admin/AdminBookings"
+import BookingPage from "./pages/Booking"
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/booking/:tripId" element={<BookingPage />} />
 
         <Route
           path="/admin"

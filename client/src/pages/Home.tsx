@@ -75,10 +75,6 @@ export default function HomePage() {
                     <Clock className="h-4 w-4 mr-1" />
                     {trip.duration} days
                   </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Users className="h-4 w-4 mr-1" />
-                    Up to {trip.maxParticipants}
-                  </div>
                 </div>
 
                 <div className="flex items-center justify-between">
