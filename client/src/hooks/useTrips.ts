@@ -75,3 +75,28 @@ export const useUpdateTrip = () => {
     },
   })
 }
+
+
+export const useAdminAccommodations = () => {
+  return useQuery({
+    queryKey: ["admin", "accommodations"],
+    queryFn: adminApi.getAccommodations,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export const useAdminVehicles = () => {
+  return useQuery({
+    queryKey: ["admin", "vehicles"],
+    queryFn: adminApi.getVehicles,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+export const useAdminActivities = () => {
+  return useQuery({
+    queryKey: ["admin", "activities"],
+    queryFn: adminApi.getActivities,
+    staleTime: 5 * 60 * 1000,
+  })
+}

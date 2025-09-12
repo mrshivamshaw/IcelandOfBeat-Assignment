@@ -10,8 +10,8 @@ adminRoute.use(adminMiddleware);
 
 adminRoute.get("/dashboard",adminDashboard);
 adminRoute.get("/trips", trips);
-adminRoute.post("/trips", createTrip);
-adminRoute.put("/trips/:id", updateTrip);
+adminRoute.post("/trips", upload.single("images"), createTrip);
+adminRoute.put("/trips/:id", upload.single("images"), updateTrip);
 adminRoute.get("/activities", activities);
 adminRoute.post("/activities", createActivity);
 adminRoute.put("/activities/:id", updateActivity);

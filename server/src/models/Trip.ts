@@ -1,26 +1,66 @@
 import mongoose, { Schema, type Document } from "mongoose"
-import { number, z } from "zod"
+import { z } from "zod"
+
+const stringOrArray = z.preprocess((val) => {
+  if (typeof val === "string") {
+    try {
+      return JSON.parse(val)
+    } catch {
+      return [val]
+    }
+  }
+  return val
+}, z.array(z.string()))
+
+const dayActivitiesSchema = z.preprocess((val) => {
+  if (typeof val === "string") {
+    try {
+      return JSON.parse(val)
+    } catch {
+      return []
+    }
+  }
+  return val
+}, z.array(
+  z.object({
+    day: z.coerce.number().min(1),
+    maxActivities: z.preprocess(
+      (val) => {
+        if (val === "" || val === undefined || val === null) return 0
+        return val
+      },
+      z.coerce.number().min(0)
+    ).default(0),
+    availableActivities: z.preprocess((val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val)
+        } catch {
+          return [val]
+        }
+      }
+      return val
+    }, z.array(z.string()))
+  })
+))
+
 
 export const TripConfigurationSchema = z.object({
-    name: z.string().min(1),
-    description: z.string(),
-    dayDuration: z.number().min(1),
-    nightDuration: z.number().min(1),
-    duration: z.number().min(1),
-    price: z.number().min(0),
-    isActive: z.boolean().default(true),
-    accommodations: z.array(z.string()),
-    vehicles: z.array(z.string()),
-    dayActivities: z.array(
-        z.object({
-            day: z.number(),
-            maxActivities: z.number(),
-            availableActivities: z.array(z.string()),
-        }),
-    ),
-    images: z.array(z.string()).optional(),
-    tags: z.array(z.string()).optional(),
+  name: z.string().min(1),
+  description: z.string(),
+  dayDuration: z.coerce.number().min(1),
+  nightDuration: z.coerce.number().min(1),
+  duration: z.coerce.number().min(1),
+  price: z.coerce.number().min(0),
+  isActive: z.coerce.boolean().default(true),
+  accommodations: stringOrArray,
+  vehicles: stringOrArray,
+  dayActivities: dayActivitiesSchema,
+  images: stringOrArray.optional(),
+  tags: stringOrArray.optional(),
 })
+
+
 
 export type TripConfigurationType = z.infer<typeof TripConfigurationSchema>
 

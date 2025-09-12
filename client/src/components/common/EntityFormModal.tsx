@@ -8,12 +8,13 @@ import { Textarea } from "../../components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { Label } from "../../components/ui/label"
 import { Badge } from "../../components/ui/badge"
+import { Checkbox } from "../../components/ui/checkbox"
 
 interface FieldConfig {
   name: string
   label: string
-  type: "text" | "textarea" | "number" | "select" | "boolean" | "image"
-  options?: { value: string | boolean; label: string }[] // For select/boolean fields
+  type: "text" | "textarea" | "number" | "select" | "boolean" | "image" | "checkbox" | "dayActivities"
+  options?: { value: string | boolean; label: string }[] // For select/boolean/checkbox/dayActivities fields
   required?: boolean
   transform?: {
     toApi?: (value: any) => any // Transform value before sending to API
@@ -61,7 +62,7 @@ export default function EntityFormModal({
     } else {
       const defaultData = fields.reduce((acc, field) => {
         if (field.type !== "image") {
-          acc[field.name] = field.type === "boolean" ? true : field.type === "number" ? "" : ""
+          acc[field.name] = field.type === "boolean" ? true : field.type === "checkbox" || field.type === "dayActivities" ? [] : field.type === "number" ? "" : ""
         }
         return acc
       }, {} as Record<string, any>)
@@ -78,6 +79,39 @@ export default function EntityFormModal({
 
   const handleSelectChange = (name: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleCheckboxChange = (name: string, value: string, checked: boolean) => {
+    setFormData((prev) => {
+      const currentValues = (prev[name] || []) as string[]
+      if (checked) {
+        return { ...prev, [name]: [...currentValues, value] }
+      } else {
+        return { ...prev, [name]: currentValues.filter((v: string) => v !== value) }
+      }
+    })
+  }
+
+  const handleDayActivitiesChange = (day: number, field: string, value: any) => {
+    setFormData((prev) => {
+      const dayActivities = [...(prev.dayActivities || [])]
+      const dayIndex = dayActivities.findIndex((d: any) => d.day === day)
+      if (dayIndex === -1) {
+        dayActivities.push({ day, maxActivities: "", availableActivities: [] })
+      }
+      const updatedDay = { ...dayActivities[dayIndex] || { day }, [field]: value }
+      if (field === "availableActivities") {
+        updatedDay.availableActivities = value
+      } else {
+        updatedDay[field] = value
+      }
+      if (dayIndex === -1) {
+        dayActivities.push(updatedDay)
+      } else {
+        dayActivities[dayIndex] = updatedDay
+      }
+      return { ...prev, dayActivities }
+    })
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,7 +152,7 @@ export default function EntityFormModal({
   }
 
   const renderField = (field: FieldConfig) => {
-    const value = formData[field.name] ?? ""
+    const value = formData[field.name] ?? (field.type === "checkbox" || field.type === "dayActivities" ? [] : "")
 
     if (field.type === "image") {
       if (mode === "view") {
@@ -146,6 +180,79 @@ export default function EntityFormModal({
       )
     }
 
+    if (field.type === "dayActivities") {
+      const duration = Number(formData.duration) || 1
+      const dayActivities = (value as Array<{ day: number; maxActivities: number; availableActivities: string[] }>) || []
+
+      if (mode === "view") {
+        return (
+          <div className="col-span-3 space-y-4">
+            {dayActivities.map((dayObj) => (
+              <div key={dayObj.day} className="space-y-2">
+                <h4 className="font-bold">Day {dayObj.day}</h4>
+                <p>Max Activities: {dayObj.maxActivities}</p>
+                <p>
+                  Activities:{" "}
+                  {dayObj.availableActivities
+                    .map((val: string) => field.options?.find((opt) => opt.value === val)?.label || val)
+                    .join(", ") || "None"}
+                </p>
+              </div>
+            ))}
+            {dayActivities.length === 0 && <p>No activities assigned</p>}
+          </div>
+        )
+      }
+
+      return (
+        <div className="col-span-3 space-y-4">
+          {Array.from({ length: duration }, (_, i) => i + 1).map((day) => {
+            const dayObj = dayActivities.find((d) => d.day === day) || { maxActivities: "", availableActivities: [] }
+            return (
+              <div key={day} className="space-y-2 border-b pb-4">
+                <h4 className="font-bold">Day {day}</h4>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor={`maxActivities-${day}`} className="text-right">
+                    Max Activities
+                  </Label>
+                  <Input
+                    id={`maxActivities-${day}`}
+                    type="number"
+                    value={dayObj.maxActivities}
+                    onChange={(e) => handleDayActivitiesChange(day, "maxActivities", e.target.value)}
+                    className="col-span-3"
+                    required={field.required}
+                    disabled={mode === "view"}
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label className="text-right">Activities</Label>
+                  <div className="col-span-3 space-y-2">
+                    {field.options?.map((option) => (
+                      <div key={option.value.toString()} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`dayActivities-${day}-${option.value}`}
+                          checked={dayObj.availableActivities.includes(option?.value?.toString())}
+                          onCheckedChange={(checked) => {
+                            const updatedActivities = checked
+                              ? [...dayObj.availableActivities, option.value.toString()]
+                              : dayObj.availableActivities.filter((v: string) => v !== option.value.toString())
+                            handleDayActivitiesChange(day, "availableActivities", updatedActivities)
+                          }}
+                          disabled={mode === "view"}
+                        />
+                        <Label htmlFor={`dayActivities-${day}-${option.value}`}>{option.label}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
     if (mode === "view") {
       if (field.type === "boolean") {
         return (
@@ -153,6 +260,12 @@ export default function EntityFormModal({
             {value ? "Active" : "Inactive"}
           </Badge>
         )
+      }
+      if (field.type === "checkbox") {
+        const selectedLabels = (value as string[])
+          .map((val: string) => field.options?.find((opt) => opt.value === val)?.label || val)
+          .join(", ")
+        return <p className="col-span-3">{selectedLabels || "None"}</p>
       }
       return <p className="col-span-3">{value?.toString() || "N/A"}</p>
     }
@@ -205,6 +318,22 @@ export default function EntityFormModal({
             </SelectContent>
           </Select>
         )
+      case "checkbox":
+        return (
+          <div className="col-span-3 space-y-2">
+            {field.options?.map((option) => (
+              <div key={option.value.toString()} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`${field.name}-${option.value}`}
+                  checked={(value as string[]).includes(option.value.toString())}
+                  onCheckedChange={(checked) => handleCheckboxChange(field.name, option.value.toString(), checked as boolean)}
+                  disabled={mode === "view"}
+                />
+                <Label htmlFor={`${field.name}-${option.value}`}>{option.label}</Label>
+              </div>
+            ))}
+          </div>
+        )
       default:
         return null
     }
@@ -219,15 +348,17 @@ export default function EntityFormModal({
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            {fields.map((field) => (
-              <div key={field.name} className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor={field.name} className="text-right font-bold">
-                  {field.label}
-                </Label>
-                {renderField(field)}
-              </div>
-            ))}
+          <div className="max-h-[60vh] overflow-y-auto px-4">
+            <div className="grid gap-4 py-4">
+              {fields.map((field) => (
+                <div key={field.name} className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor={field.name} className="text-right font-bold">
+                    {field.label}
+                  </Label>
+                  {renderField(field)}
+                </div>
+              ))}
+            </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
