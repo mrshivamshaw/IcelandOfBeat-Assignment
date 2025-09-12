@@ -2,7 +2,7 @@ import express from "express"
 import { adminMiddleware } from "../middleware/auth"
 import { TripConfiguration, TripConfigurationSchema } from "../models/Trip"
 import { Activity, ActivitySchema } from "../models/Activity"
-import { Vehicle } from "../models/Vehicle"
+import { Vehicle, VehicleSchema } from "../models/Vehicle"
 import { Booking } from "../models/Booking"
 import { DateRange, DateRangeSchema, PricingRule, PricingRuleSchema } from "../models/PriceRule"
 import { Accommodation, AccommodationSchema } from "../models/Accommadation"
@@ -245,5 +245,69 @@ export const getAccommodations = async (req: express.Request, res: express.Respo
         res.json(accommodations)
     } catch (error) {
         next(error)
+    }
+}
+
+export const createVehicle = async(req: express.Request, res: express.Response) => {
+    try {
+        const validateData = VehicleSchema.parse(req.body)
+        if (!validateData) {
+            return res.status(400).json({ error: "Invalid Vehicle data" })
+        }
+
+        const newVehicle = new Vehicle(validateData);
+        await newVehicle.save();
+
+        res.status(201).json(newVehicle)
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+export const updateVehicle = async(req: express.Request, res: express.Response) => {
+    try {
+        const vehicleId = req.params.id;
+        const validateData = VehicleSchema.partial().parse(req.body)
+        if (!validateData) {
+            return res.status(400).json({ error: "Invalid Vehicle data" })
+        }
+
+        const updatedVehicle = await Vehicle.findByIdAndUpdate(vehicleId, validateData, {
+            new: true,
+            runValidators: true,
+        });
+
+        if (!updatedVehicle) {
+            return res.status(404).json({ error: "Vehicle not found" })
+        }
+
+        res.json(updatedVehicle)
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+export const deleteVehicle = async(req: express.Request, res: express.Response) => {
+    try {
+        const vehicleId = req.params.id;
+
+        const deletedVehicle = await Vehicle.findByIdAndDelete(vehicleId);
+
+        if (!deletedVehicle) {
+            return res.status(404).json({ error: "Vehicle not found" })
+        }
+
+        res.json({ message: "Vehicle deleted successfully" })
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+export const getVehicles = async(req: express.Request, res: express.Response) => {
+    try {
+        const vehicles = await Vehicle.find();
+        res.json(vehicles);
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
     }
 }
