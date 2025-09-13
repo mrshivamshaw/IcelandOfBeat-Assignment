@@ -95,6 +95,7 @@ export default function BookingStepper({ trip }: BookingStepperProps) {
         selectedActivities: newData.selectedActivities,
         extraNights: newData.extraNights,
         duration: trip.duration,
+        tripId: trip._id,
       })
     }
     console.log(newData);
