@@ -1,5 +1,6 @@
 import { DateRange, PricingRule } from "../models/PriceRule"
 import { Activity } from "../models/Activity"
+import { TripConfiguration } from "../models/Trip";
 
 export class PricingEngine {
     async calculateBookingPrice(bookingData: {
@@ -10,14 +11,20 @@ export class PricingEngine {
         selectedActivities: string[]
         extraNights?: { before: number; after: number }
         duration: number
+        tripId: string
     }) {
         const breakdown: any[] = []
         let accommodationTotal = 0
         let vehicleTotal = 0
         let activitiesTotal = 0
         let extrasTotal = 0
+        console.log("bookingData : ",bookingData);
+        
 
         const dateRange = await this.findDateRange(bookingData.startDate)
+
+        console.log("dateRange : ",dateRange);
+        
 
         //accommodation pricing
         const accommodationPrice = await this.getAccommodationPrice(
@@ -25,7 +32,9 @@ export class PricingEngine {
             dateRange?._id,
             bookingData.travelers.adults + bookingData.travelers.children,
         )
+        
         accommodationTotal = accommodationPrice * bookingData.duration
+        console.log("accommodationTotal : ", accommodationTotal);
         breakdown.push({
             type: "accommodation",
             name: bookingData.selectedAccommodation,
@@ -44,6 +53,7 @@ export class PricingEngine {
             quantity: bookingData.duration,
             total: vehicleTotal,
         })
+        console.log("vehicleTotal : ", vehicleTotal);
 
         //activities pricing
         for (const activityId of bookingData.selectedActivities) {
@@ -64,6 +74,8 @@ export class PricingEngine {
                 })
             }
         }
+
+        console.log("activitiesTotal : ", activitiesTotal);
 
         //extra nights
         if (bookingData.extraNights?.before) {
@@ -89,8 +101,8 @@ export class PricingEngine {
                 total: extraPrice,
             })
         }
-
-        const subtotal = accommodationTotal + vehicleTotal + activitiesTotal + extrasTotal
+        const tripPrice = await TripConfiguration.findById(bookingData.tripId);
+        const subtotal = accommodationTotal + vehicleTotal + activitiesTotal + extrasTotal + (tripPrice?.price || 0)
         const taxes = subtotal * 0.24
         const total = subtotal + taxes
 
@@ -106,14 +118,19 @@ export class PricingEngine {
         }
     }
 
-    private async findDateRange(date: string) {
+   private async findDateRange(date: string) {
         const bookingDate = new Date(date)
-        return await DateRange.findOne({
-            startDate: { $lte: bookingDate },
-            endDate: { $gte: bookingDate },
-            isActive: true,
-        })
+        const bookingMonthDay = (bookingDate.getMonth() + 1) * 100 + bookingDate.getDate()
+
+        const ranges = await DateRange.find({ isActive: true })
+
+        return ranges.find((r) => {
+            const start = (r.startDate.getMonth() + 1) * 100 + r.startDate.getDate()
+            const end = (r.endDate.getMonth() + 1) * 100 + r.endDate.getDate()
+            return bookingMonthDay >= start && bookingMonthDay <= end
+        }) || null
     }
+
 
     private async getAccommodationPrice(accommodationId: string, dateRangeId: any, guests: number): Promise<number> {
         const rule = await PricingRule.findOne({
@@ -123,11 +140,14 @@ export class PricingEngine {
             isActive: true,
         })
 
+        console.log("rule for accommodation: ", rule);
+        
+
         if (rule) {
             return rule.basePrice + rule.perPersonPrice * guests
         }
 
-        return 10000
+        return 0
     }
 
     private async getVehiclePrice(vehicleId: string, dateRangeId: any): Promise<number> {
@@ -142,7 +162,7 @@ export class PricingEngine {
             return rule.basePrice
         }
 
-        return 15000
+        return 0
     }
 
     private async getActivityPrice(activityId: string, dateRangeId: any, participants: number): Promise<number> {
@@ -162,6 +182,6 @@ export class PricingEngine {
             return activity.perPersonPrice * participants
         }
 
-        return 5000
+        return 0
     }
 }
