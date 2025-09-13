@@ -23,6 +23,7 @@ export const createBooking = async (req: express.Request, res: express.Response,
       selectedActivities: validatedData.selectedActivities,
       extraNights: validatedData.extraNights,
       duration: trip.duration,
+      tripId: trip?._id as string,
     })
 
     const booking = new Booking({

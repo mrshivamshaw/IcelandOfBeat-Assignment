@@ -4,7 +4,7 @@ import { PricingEngine } from "../services/PriceEngine"
 
 export const calculatePrice = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const { startDate, travelers, selectedAccommodation, selectedVehicle, selectedActivities, extraNights, duration } =
+        const { startDate, travelers, selectedAccommodation, selectedVehicle, selectedActivities, extraNights, duration, tripId } =
             req.body
 
         const pricingEngine = new PricingEngine()
@@ -16,6 +16,7 @@ export const calculatePrice = async (req: express.Request, res: express.Response
             selectedActivities: selectedActivities || [],
             extraNights,
             duration,
+            tripId: tripId,
         })
 
         res.json(pricing)
