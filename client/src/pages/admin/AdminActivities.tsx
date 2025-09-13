@@ -9,6 +9,7 @@ import { Input } from "../../components/ui/input"
 import { Plus, Search, Edit, Eye, Clock } from "lucide-react"
 import { Activity } from "lucide-react"
 import EntityFormModal from "../../components/common/EntityFormModal"
+import type { FieldConfig } from "@/types/types"
 
 export default function AdminActivities() {
   const { data: activities, isLoading } = useAdminActivities()
@@ -235,10 +236,10 @@ export default function AdminActivities() {
         onOpenChange={(open) => setModalConfig((prev) => ({ ...prev, isOpen: open }))}
         mode={modalConfig.mode}
         entityName="Activity"
-        fields={activityFields}
+        fields={activityFields as FieldConfig[]}
         initialData={modalConfig.initialData}
         onSubmit={modalConfig.mode === "create" ? handleAddSubmit : handleEditSubmit}
-        isSubmitting={modalConfig.mode === "create" ? createActivity.isLoading : updateActivity.isLoading}
+        isSubmitting={modalConfig.mode === "create" ? createActivity.isPending : modalConfig.mode === "edit" ? updateActivity.isPending : false}
       />
     </div>
   )

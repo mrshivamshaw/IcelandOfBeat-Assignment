@@ -8,6 +8,7 @@ import { Badge } from "../../components/ui/badge"
 import { Input } from "../../components/ui/input"
 import { Plus, Search, Edit, Eye, Users, DoorClosed, Briefcase } from "lucide-react"
 import EntityFormModal from "../../components/common/EntityFormModal"
+import type { FieldConfig } from "@/types/types"
 
 export default function AdminVehicles() {
   const { data: vehicles, isLoading } = useAdminVehicles()
@@ -226,10 +227,10 @@ export default function AdminVehicles() {
         onOpenChange={(open) => setModalConfig((prev) => ({ ...prev, isOpen: open }))}
         mode={modalConfig.mode}
         entityName="Vehicle"
-        fields={vehicleFields}
+        fields={vehicleFields as FieldConfig[]}
         initialData={modalConfig.initialData}
-        onSubmit={modalConfig.mode === "create" ? handleAddSubmit : handleEditSubmit}
-        isSubmitting={modalConfig.mode === "create" ? createVehicle.isLoading : updateVehicle.isLoading}
+        onSubmit={modalConfig.mode === "create" ? handleAddSubmit : modalConfig.mode === "edit" ? handleEditSubmit : undefined}
+        isSubmitting={modalConfig.mode === "create" ? createVehicle.isPending : modalConfig.mode === "edit" ? updateVehicle.isPending : false}
       />
     </div>
   )

@@ -9,18 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Label } from "../../components/ui/label"
 import { Badge } from "../../components/ui/badge"
 import { Checkbox } from "../../components/ui/checkbox"
+import type { FieldConfig } from "@/types/types"
 
-interface FieldConfig {
-  name: string
-  label: string
-  type: "text" | "textarea" | "number" | "select" | "boolean" | "image" | "checkbox" | "dayActivities"
-  options?: { value: string | boolean; label: string }[] // For select/boolean/checkbox/dayActivities fields
-  required?: boolean
-  transform?: {
-    toApi?: (value: any) => any // Transform value before sending to API
-    fromApi?: (value: any) => any // Transform value when receiving from API
-  }
+
+interface DayActivity {
+  day: number
+  maxActivities: string
+  availableActivities: string[]
 }
+
 
 interface EntityFormModalProps {
   isOpen: boolean
@@ -43,9 +40,10 @@ export default function EntityFormModal({
   onSubmit,
   isSubmitting,
 }: EntityFormModalProps) {
-  const [formData, setFormData] = useState<Record<string, any>>({})
+  const [formData, setFormData] = useState<Record<string, any> & { dayActivities?: DayActivity[] }>({})
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [formMode] = useState(mode)
 
   useEffect(() => {
     if (initialData && (mode === "edit" || mode === "view")) {
@@ -97,9 +95,9 @@ export default function EntityFormModal({
       const dayActivities = [...(prev.dayActivities || [])]
       const dayIndex = dayActivities.findIndex((d: any) => d.day === day)
       if (dayIndex === -1) {
-        dayActivities.push({ day, maxActivities: "", availableActivities: [] })
+        dayActivities.push({ day, maxActivities: "", availableActivities: [] as string[]})
       }
-      const updatedDay = { ...dayActivities[dayIndex] || { day }, [field]: value }
+      const updatedDay: { day: number; maxActivities: string; availableActivities: string[]; [key: string]: any } = { ...dayActivities[dayIndex] || { day }, [field]: value }
       if (field === "availableActivities") {
         updatedDay.availableActivities = value
       } else {
@@ -174,7 +172,7 @@ export default function EntityFormModal({
             accept="image/*"
             onChange={handleImageChange}
             className="cursor-pointer"
-            disabled={mode === "view"}
+            disabled={formMode === "view"}
           />
         </div>
       )
@@ -222,7 +220,7 @@ export default function EntityFormModal({
                     onChange={(e) => handleDayActivitiesChange(day, "maxActivities", e.target.value)}
                     className="col-span-3"
                     required={field.required}
-                    disabled={mode === "view"}
+                    disabled={formMode === "view"}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
@@ -232,14 +230,14 @@ export default function EntityFormModal({
                       <div key={option.value.toString()} className="flex items-center space-x-2">
                         <Checkbox
                           id={`dayActivities-${day}-${option.value}`}
-                          checked={dayObj.availableActivities.includes(option?.value?.toString())}
+                          checked={(dayObj.availableActivities as string[]).includes(option.value.toString())}
                           onCheckedChange={(checked) => {
                             const updatedActivities = checked
                               ? [...dayObj.availableActivities, option.value.toString()]
                               : dayObj.availableActivities.filter((v: string) => v !== option.value.toString())
                             handleDayActivitiesChange(day, "availableActivities", updatedActivities)
                           }}
-                          disabled={mode === "view"}
+                          disabled={formMode === "view"}
                         />
                         <Label htmlFor={`dayActivities-${day}-${option.value}`}>{option.label}</Label>
                       </div>
@@ -282,7 +280,7 @@ export default function EntityFormModal({
             onChange={handleInputChange}
             className="col-span-3"
             required={field.required}
-            disabled={mode === "view"}
+            disabled={formMode === "view"}
           />
         )
       case "textarea":
@@ -294,7 +292,7 @@ export default function EntityFormModal({
             onChange={handleInputChange}
             className="col-span-3"
             required={field.required}
-            disabled={mode === "view"}
+            disabled={formMode === "view"}
           />
         )
       case "select":
@@ -304,7 +302,7 @@ export default function EntityFormModal({
             name={field.name}
             value={value?.toString()}
             onValueChange={(val) => handleSelectChange(field.name, field.type === "boolean" ? val === "true" : val)}
-            disabled={mode === "view"}
+            disabled={formMode === "view"}
           >
             <SelectTrigger className="col-span-3">
               <SelectValue />
@@ -327,7 +325,7 @@ export default function EntityFormModal({
                   id={`${field.name}-${option.value}`}
                   checked={(value as string[]).includes(option.value.toString())}
                   onCheckedChange={(checked) => handleCheckboxChange(field.name, option.value.toString(), checked as boolean)}
-                  disabled={mode === "view"}
+                  disabled={formMode === "view"}
                 />
                 <Label htmlFor={`${field.name}-${option.value}`}>{option.label}</Label>
               </div>
@@ -362,7 +360,7 @@ export default function EntityFormModal({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              {mode === "view" ? "Close" : "Cancel"}
+              {formMode === "view" ? "Close" : "Cancel"}
             </Button>
             {mode !== "view" && (
               <Button type="submit" disabled={isSubmitting}>

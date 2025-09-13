@@ -1,6 +1,6 @@
 import { useAdminDashboard } from "../../hooks/useAdmin"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
-import { Calendar, DollarSign, MapPin, Activity, Car, TrendingUp, Clock } from "lucide-react"
+import { Calendar, MapPin, Activity, Car, TrendingUp, Clock } from "lucide-react"
 
 export default function AdminDashboard() {
     const { data: stats, isLoading } = useAdminDashboard()

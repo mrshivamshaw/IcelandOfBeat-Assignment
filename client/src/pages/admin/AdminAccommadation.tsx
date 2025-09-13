@@ -8,6 +8,7 @@ import { Badge } from "../../components/ui/badge"
 import { Input } from "../../components/ui/input"
 import { Plus, Search, Edit, Eye, Users } from "lucide-react"
 import EntityFormModal from "../../components/common/EntityFormModal"
+import type { FieldConfig } from "@/types/types"
 
 export default function AdminAccommodations() {
   const { data: accommodations, isLoading } = useAdminAccommodations()
@@ -182,10 +183,10 @@ export default function AdminAccommodations() {
         onOpenChange={(open) => setModalConfig((prev) => ({ ...prev, isOpen: open }))}
         mode={modalConfig.mode}
         entityName="Accommodation"
-        fields={accommodationFields}
+        fields={accommodationFields as FieldConfig[]}
         initialData={modalConfig.initialData}
         onSubmit={modalConfig.mode === "create" ? handleAddSubmit : handleEditSubmit}
-        isSubmitting={modalConfig.mode === "create" ? createAccommodation.isLoading : updateAccommodation.isLoading}
+        isSubmitting={modalConfig.mode === "create" ? createAccommodation.isPending : modalConfig.mode === "edit" ? updateAccommodation.isPending : false}
       />
     </div>
   )

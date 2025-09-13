@@ -8,6 +8,7 @@ import { Badge } from "../../components/ui/badge"
 import { Input } from "../../components/ui/input"
 import { Plus, Search, Edit, Eye, Users, Clock, MapPin } from "lucide-react"
 import EntityFormModal from "../../components/common/EntityFormModal"
+import type { FieldConfig } from "@/types/types"
 
 export default function AdminTrips() {
     const { data: trips, isLoading: isTripsLoading } = useAdminTrips()
@@ -231,10 +232,10 @@ export default function AdminTrips() {
                 onOpenChange={(open) => setModalConfig((prev) => ({ ...prev, isOpen: open }))}
                 mode={modalConfig.mode}
                 entityName="Trip"
-                fields={tripFields}
+                fields={tripFields as FieldConfig[]}
                 initialData={modalConfig.initialData}
-                onSubmit={modalConfig.mode === "create" ? handleAddSubmit : handleEditSubmit}
-                isSubmitting={modalConfig.mode === "create" ? createTrip.isLoading : updateTrip.isLoading}
+                onSubmit={modalConfig.mode === "create" ? handleAddSubmit : modalConfig.mode === "edit" ? handleEditSubmit : undefined}
+                isSubmitting={modalConfig.mode === "create" ? createTrip.isPending : modalConfig.mode === "edit" ? updateTrip.isPending : false}
             />
         </div>
     )

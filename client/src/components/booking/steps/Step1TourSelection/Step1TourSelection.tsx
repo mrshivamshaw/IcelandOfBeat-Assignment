@@ -58,7 +58,7 @@ export default function Step1TourSelection({ trip, bookingData, updateBookingDat
   const equalsId = (a: any, b: any) => String(a?._id ?? a) === String(b);
 
   const getAccommodationPrice = (accommodationId: string) => {
-    const accommodation = trip.accommodations.find((acc: any) => equalsId(acc, accommodationId));
+    const accommodation: any = trip.accommodations.find((acc: any) => equalsId(acc, accommodationId));
     if (!accommodation) return 0;
 
     const bookingStart = toDate(bookingData?.startDate);
@@ -71,7 +71,7 @@ export default function Step1TourSelection({ trip, bookingData, updateBookingDat
   }
 
   const getVehiclePrice = (vehicleId: string) => {
-    const vehicle = trip.vehicles.find((veh: any) => equalsId(veh, vehicleId));
+    const vehicle: any = trip.vehicles.find((veh: any) => equalsId(veh, vehicleId));
     if (!vehicle) return 0;
 
     const bookingStart = toDate(bookingData?.startDate);

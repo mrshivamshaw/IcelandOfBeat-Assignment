@@ -103,3 +103,15 @@ export interface BookingData {
   pricingBreakdown?: any
   
 }
+
+export interface FieldConfig {
+  name: string
+  label: string
+  type: "text" | "textarea" | "number" | "select" | "boolean" | "image" | "checkbox" | "dayActivities"
+  options?: { value: string | boolean; label: string }[] 
+  required?: boolean
+  transform?: {
+    toApi?: (value: any) => any 
+    fromApi?: (value: any) => any
+  }
+}
