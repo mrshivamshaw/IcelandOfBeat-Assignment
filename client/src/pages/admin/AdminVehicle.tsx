@@ -68,12 +68,6 @@ export default function AdminVehicles() {
         { value: false, label: "Inactive" },
       ],
     },
-    {
-      name: "image",
-      label: "Image",
-      type: "image",
-      required: false,
-    },
   ]
 
   const filteredVehicles = vehicles?.filter((vehicle: any) =>

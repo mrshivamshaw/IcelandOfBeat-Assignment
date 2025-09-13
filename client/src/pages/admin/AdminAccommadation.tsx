@@ -45,12 +45,6 @@ export default function AdminAccommodations() {
         { value: false, label: " Inactive" },
       ],
     },
-    {
-      name: "image",
-      label: "Image",
-      type: "image",
-      required: false,
-    },
   ]
 
   const filteredAccommodations = accommodations?.filter((accommodation: any) =>

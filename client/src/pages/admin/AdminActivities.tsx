@@ -58,12 +58,6 @@ export default function AdminActivities() {
         { value: false, label: "Inactive" },
       ],
     },
-    {
-      name: "image",
-      label: "Image",
-      type: "image",
-      required: false,
-    },
   ]
 
   const filteredActivities = activities?.filter((activity: any) => {

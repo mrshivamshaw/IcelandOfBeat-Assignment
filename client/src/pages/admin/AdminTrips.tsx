@@ -80,12 +80,6 @@ export default function AdminTrips() {
                 { value: false, label: "Inactive" },
             ],
         },
-        {
-            name: "image",
-            label: "Image",
-            type: "image",
-            required: false,
-        },
     ]
 
     const filteredTrips = trips?.filter((trip: any) =>

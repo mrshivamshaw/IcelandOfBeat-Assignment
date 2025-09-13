@@ -138,7 +138,7 @@ export default function BookingStepper({ trip }: BookingStepperProps) {
     }
   }
 
-  const CurrentStepComponent = steps[currentStep - 1].component
+  const CurrentStepComponent = steps[currentStep - 1]?.component
 
   return (
     <div className="min-h-screen bg-gray-50">
